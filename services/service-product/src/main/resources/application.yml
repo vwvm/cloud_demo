@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: service-product
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        import-check:
+          enabled: false  #禁用导入检查
+    sentinel:
+      transport:
+        dashboard: localhost:48858
+      eager: true
+server:
+  port: 9001
+springdoc:
+  swagger-ui:
+    path: /api/docs

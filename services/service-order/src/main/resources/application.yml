@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: dev
+    include: feign
+  application:
+    name: service-order
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      config:
+        namespace: ${spring.profiles.active:dev}
+    sentinel:
+      transport:
+        dashboard: 48858
+--- #多文档模式dev环境价值配置
+spring:
+  config:
+    import:
+      - nacos:common.yml?group=order
+      - nacos:database.yml?group=order
+    activate:
+      on-profile: dev
+logging:
+  level:
+    com.zotci.order.feign: debug
+--- #多文档模式test环境价值配置
+spring:
+  config:
+    import:
+      - nacos:common.yml?group=order
+      - nacos:database.yml?group=order
+    activate:
+      on-profile: test
+---
+
+server:
+  port: 8001
+
+springdoc:
+  swagger-ui:
+    path: /api/docs
