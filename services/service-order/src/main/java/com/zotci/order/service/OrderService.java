@@ -1,12 +1,12 @@
 package com.zotci.order.service;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.zotci.order.entry.Order;
 import com.zotci.order.feign.ProductFeignClient;
 import com.zotci.product.entry.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
@@ -19,7 +19,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@SentinelResource(value = "createOrder")
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -31,10 +30,12 @@ public class OrderService {
 
     /**
      * 创建订单
-     * @param userId 用户ID
+     *
+     * @param userId    用户ID
      * @param productId 商品ID
      * @return Order对象
      */
+    @SentinelResource(value = "createOrder", blockHandler = "createOrder")
     public Order createOrder(Long userId, Long productId) {
         // Product product = getProductFromRemoteWithLoadBalance(productId);
         Product product = productFeignClient.getProductById(productId);
@@ -48,6 +49,28 @@ public class OrderService {
         order.setAddress("");
         // 远程调用
         order.setProductList(List.of(product));
+        return order;
+    }
+
+    /**
+     * 执行兜底回调
+     *
+     * @param userId
+     * @param productId
+     * @param blockException
+     * @return
+     */
+    public Order createOrder(Long userId, Long productId, BlockException blockException) {
+        log.info(blockException.getClass().getSimpleName());
+
+        Order order = new Order();
+        order.setId(0L);
+        order.setTotalAmount(new BigDecimal("0"));
+        order.setUserId(0L);
+        order.setNickName("未知用户");
+        order.setAddress("错误信息： " + blockException.getMessage());
+        order.setProductList(null);
+
         return order;
     }
 

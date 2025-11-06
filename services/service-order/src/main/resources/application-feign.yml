@@ -13,6 +13,7 @@ spring:
       transport:
         dashboard: localhost:48858
       eager: true
+      web-context-unify: false
 feign:
   sentinel:
     enabled: true

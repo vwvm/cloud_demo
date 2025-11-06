@@ -1,0 +1,69 @@
+name: cloud_demo
+services:
+  mysql:
+    image: mysql:8.4.7
+    container_name: nacos-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # 根密码
+      MYSQL_DATABASE: nacos_config  # Nacos 专用数据库
+      MYSQL_USER: BlackBox
+      MYSQL_PASSWORD: Asdfgh1235.
+    volumes:
+      - ./nacos-mysql/data:/var/lib/mysql  # 持久化 MySQL 数据
+      - ./nacos-mysql/init:/docker-entrypoint-initdb.d  # 挂载初始化脚本（关键）
+    ports:
+      - "43306:3306"
+    networks:
+      - nacos-net
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nacos 服务（启用 MySQL 数据源配置，实现数据持久化）
+  nacos:
+    image: nacos/nacos-server:v3.1.0
+    container_name: nacos-standalone
+    depends_on:
+      mysql:
+        condition: service_healthy  # 确保 MySQL 就绪后再启动 Nacos
+    environment:
+      MODE: standalone  # 单机模式
+      SPRING_DATASOURCE_PLATFORM: mysql  # 启用 MySQL 数据源（关键，取消注释）
+      MYSQL_SERVICE_HOST: mysql  # MySQL 服务名（同一网络内可直接用服务名访问）
+      MYSQL_SERVICE_PORT: 3306  # MySQL 端口
+      MYSQL_SERVICE_DB_NAME: nacos_config  # 对应 MySQL 中创建的数据库
+      MYSQL_SERVICE_USER: BlackBox  # MySQL 用户名
+      MYSQL_SERVICE_PASSWORD: Asdfgh1235.  # MySQL 密码
+      # 认证配置（保持不变）
+      NACOS_AUTH_TOKEN: BlackBoxBlackBoxBlackBoxBlackBoxBlackBoxBlackBoxBlackBoxBlackBox
+      NACOS_AUTH_IDENTITY_KEY: BlackBox
+      NACOS_AUTH_IDENTITY_VALUE: Asdfgh1235.
+    ports:
+      - "48848:8848"  # 控制台端口
+      - "49848:9848"   # 客户端通信端口
+      - "49849:9849"   # 客户端通信端口（备份）
+    volumes:
+      - ./nacos/logs:/home/nacos/logs  # 持久化 Nacos 日志
+    networks:
+      - nacos-net
+    restart: unless-stopped
+
+
+  sentinel-dashboard:
+    image: herodotus/sentinel-dashboard:v1.8.8
+    container_name: sentinel-dashboard
+    depends_on:
+      - nacos
+    ports:
+      - "48858:8858"
+    networks:
+      - nacos-net  # 建议加入同一网络，方便后续通信
+    restart: unless-stopped
+
+
+networks:
+  nacos-net:
+    driver: bridge

@@ -22,14 +22,32 @@ public class OrderController {
 
     @GetMapping("/getConfig")
     @Operation(summary = "获取配置")
-    public String getConfig(){
+    public String getConfig() {
         return properties.toString();
     }
 
 
     @GetMapping("/createOrder")
-    @Operation(summary = "获取商品")
+    @Operation(summary = "普通创建订单")
     public Order createOrder(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId) {
         return orderService.createOrder(userId, productId);
+    }
+
+    @GetMapping("/secKillOrder")
+    @Operation(summary = "秒杀创建订单")
+    public Order secKillOrder(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId) {
+        return orderService.createOrder(userId, productId);
+    }
+
+    @GetMapping("/writeDb")
+    @Operation(summary = "写数据库")
+    public String writeDb() {
+        return "写数据库";
+    }
+
+    @GetMapping("/readDb")
+    @Operation(summary = "读数据库")
+    public String readDb() {
+        return "读数据库";
     }
 }
