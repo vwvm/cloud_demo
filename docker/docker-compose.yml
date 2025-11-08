@@ -42,6 +42,7 @@ services:
       NACOS_AUTH_IDENTITY_KEY: BlackBox
       NACOS_AUTH_IDENTITY_VALUE: Asdfgh1235.
     ports:
+      - "48080:8080"  # web端口
       - "48848:8848"  # 控制台端口
       - "49848:9848"   # 客户端通信端口
       - "49849:9849"   # 客户端通信端口（备份）

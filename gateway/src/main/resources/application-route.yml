@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: order-route
+              uri: lb://service-order
+              predicates:
+                - name: Path
+                  args:
+                    patterns: /api/order/**
+                    matchTrailingSlash: true
+            - id: product-route
+              uri: lb://service-product
+              predicates:
+                - Path=/api/product/**
+            - id: bing-route
+              uri:
+                https://cn.bing.com
+              predicates:
+                - name: Path
+                  args:
+                    patterns: /search
+                - name: Query
+                  args:
+                    param: q
+#                - name: VIP
+#                  args:
+#                   param: user
+#                   value: user

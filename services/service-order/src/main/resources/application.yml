@@ -9,6 +9,8 @@ spring:
       server-addr: localhost:48848
       config:
         namespace: ${spring.profiles.active:dev}
+      discovery:
+        namespace: ${spring.profiles.active:dev}
     sentinel:
       transport:
         dashboard: 48858
@@ -21,6 +23,15 @@ spring:
             group-id: SENTINEL_GROUP # 分组（自定义，建议统一用 SENTINEL_GROUP）
             rule-type: flow # 规则类型：flow（限流）、degrade（熔断）、param-flow（热点参数）等
             # 可选：Nacos 认证信息（若开启了鉴权）
+            username: nacos
+            password: Asdfgh1235.
+        # 如需配置熔断规则，新增一个数据源
+        degrade-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.server-addr}
+            data-id: ${spring.application.name}-degrade-rules
+            group-id: SENTINEL_GROUP
+            rule-type: degrade
             username: nacos
             password: Asdfgh1235.
 --- #多文档模式dev环境价值配置

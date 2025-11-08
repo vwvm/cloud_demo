@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/order")
 @Tag(name = "订单API")
 public class OrderController {
 
@@ -30,6 +30,7 @@ public class OrderController {
     @GetMapping("/createOrder")
     @Operation(summary = "普通创建订单")
     public Order createOrder(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId) {
+        System.out.println("发送请求了".repeat(3));
         return orderService.createOrder(userId, productId);
     }
 

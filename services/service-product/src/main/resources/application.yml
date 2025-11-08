@@ -7,6 +7,9 @@ spring:
       config:
         import-check:
           enabled: false  #禁用导入检查
+        namespace: ${spring.profiles.active:dev}
+      discovery:
+        namespace: ${spring.profiles.active:dev}
     sentinel:
       transport:
         dashboard: localhost:48858

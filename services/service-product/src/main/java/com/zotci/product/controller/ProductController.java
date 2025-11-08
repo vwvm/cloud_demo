@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 @Tag(name = "商品API")
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/product")
+    @GetMapping()
     @Operation(summary = "获取商品")
     public Product getProduct(@RequestParam("id") Long productId) {
         log.info("productId:{}", productId);

@@ -38,7 +38,6 @@ class OrderApplication {
                     System.out.println("变化的配置信息: " + configInfo);
                 }
             });
-            System.out.println("*".repeat(32));
         };
     }
 }

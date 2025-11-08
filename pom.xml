@@ -12,6 +12,7 @@
     <modules>
         <module>services</module>
         <module>Model</module>
+        <module>gateway</module>
     </modules>
     <groupId>com.zotci</groupId>
     <artifactId>cloud_demo</artifactId>
